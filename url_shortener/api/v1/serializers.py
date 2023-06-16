@@ -12,8 +12,7 @@ class URLSerializer(serializers.ModelSerializer):
         original_url = validated_data.get("original_url")
         shortener = URLShortener()
 
-        validated_data["short_url"] = "http://127.0.0.1:8000/" \
-            + shortener.encode_md5(original_url)
+        validated_data["short_url"] = shortener.encode_md5(original_url)
         return super().create(validated_data)
 
     def validate(self, attrs):
@@ -27,5 +26,5 @@ class URLSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
-        rep["short_url"] = instance.short_url
+        rep["short_url"] = "http://127.0.0.1:8000/" + instance.short_url
         return rep
