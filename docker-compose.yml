@@ -1,0 +1,36 @@
+networks:
+  djangonetwork:
+    driver: bridge
+
+
+
+services:
+  url-db:
+    restart: unless-stopped
+    image: postgres:latest
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${DB_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${DB_POSTGRES_PASS}
+      - POSTGRES_DB=${DB_POSTGRES_NAME}
+
+    networks:
+      - djangonetwork
+
+
+  backend:
+    build: .
+    container_name: url-shortener-backend
+    command: >
+      sh -c "python manage.py migrate &&
+            python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    networks:
+      - djangonetwork
+    depends_on:
+      - url-db
