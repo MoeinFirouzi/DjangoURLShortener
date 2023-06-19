@@ -5,5 +5,7 @@ psycopg2
 
 environs==9.5
 
+django-redis
+
 flake8
 black

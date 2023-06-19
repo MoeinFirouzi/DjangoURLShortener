@@ -3,6 +3,8 @@ from url_shortener.api.v1.serializers import URLSerializer
 from django.shortcuts import get_list_or_404
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
 from url_shortener.models import Url
 
@@ -47,3 +49,7 @@ class RetrieveURLAPIView(RetrieveAPIView):
 
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
+    @method_decorator(cache_page(60 * 60))
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
